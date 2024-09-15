@@ -116,18 +116,37 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel())
 private fun Advertisement(modifier: Modifier = Modifier, advertisement: AdvertisementItem, onLike: (AdvertisementItem) -> Unit) {
     Card(
         shape = RoundedCornerShape(15.dp),
-        modifier = modifier.fillMaxSize().padding(4.dp)
-    ){
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                Text(
-                    text = "${advertisement.id}. ${advertisement.title}",
-                    color = Color.Green,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Box(modifier = Modifier.background(Color.Blue.copy(alpha = 0.5f)).clickable { onLike(advertisement) }
-                    .padding(8.dp), contentAlignment = Alignment.Center) {
+        modifier = modifier
+            .fillMaxSize()
+            .padding(4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                // Текст новости занимает 90% от высоты
+                Box(
+                    modifier = Modifier
+                        .weight(9f) // 90% высоты
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "${advertisement.id}. ${advertisement.title}",
+                        color = Color.Green,
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+                // Панель лайков занимает 10% от высоты
+                Box(
+                    modifier = Modifier
+                        .weight(1f) // 10% высоты
+                        .background(Color.Blue.copy(alpha = 0.5f))
+                        .clickable { onLike(advertisement) }
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "Likes: ${advertisement.likes}",
                         color = Color.Red
@@ -137,6 +156,7 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
         }
     }
 }
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
