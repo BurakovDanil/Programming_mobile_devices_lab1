@@ -139,11 +139,10 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                         .weight(1f)
                         .background(Color.Blue.copy(alpha = 0.5f))
                         .clickable { onLike(advertisement) }
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center
+                        .padding(8.dp),
+                    contentAlignment = Alignment.BottomCenter
                 ){
-                    Text(text = "Likes: ${advertisement.likes}", color = Color.Red)
+                    Text(text = "Лайки: ${advertisement.likes}", color = Color.Red)
                 }
             }
         }
