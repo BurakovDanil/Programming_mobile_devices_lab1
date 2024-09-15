@@ -116,22 +116,34 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel())
 private fun Advertisement(modifier: Modifier = Modifier, advertisement: AdvertisementItem, onLike: (AdvertisementItem) -> Unit) {
     Card(
         shape = RoundedCornerShape(15.dp),
-        modifier = modifier.fillMaxSize().padding(4.dp)
-    ){
-        Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
-            Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-                Text(
-                    text = "${advertisement.id}. ${advertisement.title}",
-                    color = Color.Green,
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Box(modifier = Modifier.background(Color.Blue.copy(alpha = 0.5f)).clickable { onLike(advertisement) }
-                    .padding(8.dp), contentAlignment = Alignment.Center) {
+        modifier = modifier
+            .fillMaxSize()
+            .padding(4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Box(
+                    modifier = Modifier.weight(9f).padding(16.dp)) {
                     Text(
-                        text = "Likes: ${advertisement.likes}",
-                        color = Color.Red
+                        text = "${advertisement.title}",
+                        color = Color.Green,
+                        style = MaterialTheme.typography.bodyLarge
                     )
+                    }
+                Box(
+                    modifier = Modifier
+                        .weight(1f)
+                        .background(Color.Blue.copy(alpha = 0.5f))
+                        .clickable { onLike(advertisement) }
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ){
+                    Text(text = "Likes: ${advertisement.likes}", color = Color.Red)
                 }
             }
         }
