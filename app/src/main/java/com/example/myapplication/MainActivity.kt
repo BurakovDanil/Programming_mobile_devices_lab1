@@ -138,24 +138,25 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                // Панель лайков занимает 10% от высоты
+                // Панель лайков занимает 10% от высоты и находится в центре
                 Box(
                     modifier = Modifier
                         .weight(1f) // 10% высоты
                         .background(Color.Blue.copy(alpha = 0.5f))
                         .clickable { onLike(advertisement) }
-                        .padding(8.dp),
-                    contentAlignment = Alignment.Center
+                        .fillMaxWidth(), // Заполняет ширину для центрирования внутри
+                    contentAlignment = Alignment.Center // Центрирование по вертикали и горизонтали
                 ) {
                     Text(
-                        text = "Likes: ${advertisement.likes}",
-                        color = Color.Red
+                        text = "Лайки: ${advertisement.likes}",
+                        color = Color.White
                     )
                 }
             }
         }
     }
 }
+
 
 
 class MainActivity : ComponentActivity() {
