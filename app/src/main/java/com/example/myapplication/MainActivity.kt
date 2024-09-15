@@ -1,3 +1,5 @@
+package com.example.myapplication
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -124,7 +126,8 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                Box(modifier = Modifier.background(Color.Blue.copy(alpha = 0.5f)).clickable { onLike(advertisement) }.padding(8.dp), contentAlignment = Alignment.Center) {
+                Box(modifier = Modifier.background(Color.Blue.copy(alpha = 0.5f)).clickable { onLike(advertisement) }
+                    .padding(8.dp), contentAlignment = Alignment.Center) {
                     Text(
                         text = "Likes: ${advertisement.likes}",
                         color = Color.Red
