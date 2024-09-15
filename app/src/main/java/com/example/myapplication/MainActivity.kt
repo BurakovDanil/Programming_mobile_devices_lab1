@@ -33,6 +33,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
+
 
 data class AdvertisementItem(
     val id: Int,
@@ -117,7 +120,7 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
     Card(
         shape = RoundedCornerShape(15.dp),
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(4.dp)
     ) {
         Box(
@@ -126,28 +129,39 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                 .background(Color.Black)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
+                // Текст новости с прокруткой
                 Box(
-                    modifier = Modifier.weight(9f).padding(16.dp)) {
+                    modifier = Modifier
+                        .weight(9f) // 90% высоты
+                        .padding(16.dp)
+                        .verticalScroll(rememberScrollState()) // Добавляем прокрутку
+                ) {
                     Text(
-                        text = "${advertisement.title}",
+                        text = "${advertisement.id}. ${advertisement.title}",
                         color = Color.Green,
                         style = MaterialTheme.typography.bodyLarge
                     )
-                    }
+                }
+                // Панель лайков занимает 10% от высоты и находится в центре
                 Box(
                     modifier = Modifier
-                        .weight(1f)
+                        .weight(1f) // 10% высоты
                         .background(Color.Blue.copy(alpha = 0.5f))
                         .clickable { onLike(advertisement) }
-                        .padding(8.dp),
-                    contentAlignment = Alignment.BottomCenter
-                ){
-                    Text(text = "Лайки: ${advertisement.likes}", color = Color.Red)
+                        .fillMaxWidth(), // Заполняет ширину для центрирования внутри
+                    contentAlignment = Alignment.Center // Центрирование по вертикали и горизонтали
+                ) {
+                    Text(
+                        text = "Лайки: ${advertisement.likes}",
+                        color = Color.White
+                    )
                 }
             }
         }
     }
 }
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
