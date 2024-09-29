@@ -117,18 +117,14 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel(),
             Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[3], onLike = { viewModel.likeAdvertisement(it) })
         }
 
-        // Добавляем кнопку для перехода на экран с кубом
-        Spacer(modifier = Modifier.height(16.dp)) // Добавляем отступ
+        Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
-                // Запускаем CubeActivity по нажатию кнопки
                 activity.startActivity(Intent(activity, CubeActivity::class.java))
             },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
+            modifier = Modifier.padding(16.dp).fillMaxWidth()
         ) {
-            Text(text = "Показать Куб")
+            Text(text = "Show cube")
         }
     }
 }
@@ -147,12 +143,11 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                 .background(Color.Black)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                // Текст новости с прокруткой
                 Box(
                     modifier = Modifier
-                        .weight(9f) // 90% высоты
+                        .weight(9f)
                         .padding(16.dp)
-                        .verticalScroll(rememberScrollState()) // Добавляем прокрутку
+                        .verticalScroll(rememberScrollState())
                 ) {
                     Text(
                         text = "${advertisement.id}. ${advertisement.title}",
@@ -160,14 +155,13 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
-                // Панель лайков занимает 10% от высоты и находится в центре
                 Box(
                     modifier = Modifier
-                        .weight(1f) // 10% высоты
+                        .weight(1f)
                         .background(Color.Blue.copy(alpha = 0.5f))
                         .clickable { onLike(advertisement) }
-                        .fillMaxWidth(), // Заполняет ширину для центрирования внутри
-                    contentAlignment = Alignment.Center // Центрирование по вертикали и горизонтали
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = "Лайки: ${advertisement.likes}",
@@ -186,39 +180,32 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Создаем GLSurfaceView для рендеринга OpenGL
         glSurfaceView = GLSurfaceView(this).apply {
             setEGLContextClientVersion(1)
-            setRenderer(MyRenderer())  // Используем рендерер для куба
+            setRenderer(MyRenderer())
             renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         }
 
         setContent {
-            // Управляем состоянием: показывать новости или куб
             var showCube by remember { mutableStateOf(false) }
 
             Column(modifier = Modifier.fillMaxSize()) {
                 if (showCube) {
-                    // Отображаем OpenGL куб
                     AndroidView(factory = { glSurfaceView })
                 } else {
-                    // Отображаем новости
                     //AdvertisementWindow()
                 }
 
-                // Кнопка для переключения между новостями и кубом
                 Button(
-                    onClick = { showCube = !showCube },  // Переключение состояния
+                    onClick = { showCube = !showCube },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(text = if (showCube) "Показать новости" else "Показать куб")
+                    Text(text = if (showCube) "Show news" else "Show cube")
                 }
             }
         }
-
-        // Устанавливаем флаг для предотвращения выключения экрана
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }
