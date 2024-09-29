@@ -10,7 +10,7 @@ class CubeActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        glSurfaceView = GLSurfaceView(this)
+        glSurfaceView = GLSurfaceView(this@CubeActivity)
         glSurfaceView.setEGLContextClientVersion(1)
         setContentView(glSurfaceView)
     }

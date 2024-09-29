@@ -182,7 +182,7 @@ class MainActivity : ComponentActivity() {
 
         glSurfaceView = GLSurfaceView(this).apply {
             setEGLContextClientVersion(1)
-            setRenderer(MyRenderer())
+            setRenderer(MyRenderer(this@MainActivity))
             renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         }
 

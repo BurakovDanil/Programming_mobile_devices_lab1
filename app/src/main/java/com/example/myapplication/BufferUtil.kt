@@ -6,6 +6,7 @@ import java.nio.FloatBuffer
 
 object BufferUtil {
     fun floatToBuffer(arr: FloatArray): FloatBuffer {
+        val bb = ByteBuffer.allocateDirect(arr.size * 4)
         bb.order(ByteOrder.nativeOrder())
         val fb = bb.asFloatBuffer()
         fb.put(arr)

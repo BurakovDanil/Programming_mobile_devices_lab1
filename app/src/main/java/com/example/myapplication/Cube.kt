@@ -6,78 +6,75 @@ import java.nio.FloatBuffer
 import javax.microedition.khronos.opengles.GL10
 
 class Cube {
+    private var mVertexBuffer: FloatBuffer
+    private var mColorBuffer: FloatBuffer
+    private var mIndexBuffer: ByteBuffer
+
     private val vertices = floatArrayOf(
-        -1.0f, -1.0f, -1.0f,  // Низ задней грани
-        1.0f, -1.0f, -1.0f,  // Низ передней грани
-        1.0f,  1.0f, -1.0f,  // Верх передней грани
-        -1.0f,  1.0f, -1.0f,  // Верх задней грани
-        -1.0f, -1.0f,  1.0f,  // Низ задней грани (спереди)
-        1.0f, -1.0f,  1.0f,  // Низ передней грани (спереди)
-        1.0f,  1.0f,  1.0f,  // Верх передней грани (спереди)
-        -1.0f,  1.0f,  1.0f   // Верх задней грани (спереди)
+        -1.0f, -1.0f, -1.0f,
+        1.0f, -1.0f, -1.0f,
+        1.0f, 1.0f, -1.0f,
+        -1.0f, 1.0f, -1.0f,
+        -1.0f, -1.0f, 1.0f,
+        1.0f, -1.0f, 1.0f,
+        1.0f, 1.0f, 1.0f,
+        -1.0f, 1.0f, 1.0f
     )
-
-    private val indices = byteArrayOf(
-        0, 1, 3, 1, 2, 3,  // Задняя грань
-        4, 5, 7, 5, 6, 7,  // Передняя грань
-        0, 1, 4, 1, 5, 4,  // Нижняя грань
-        2, 3, 6, 3, 7, 6,  // Верхняя грань
-        0, 3, 4, 3, 7, 4,  // Левая грань
-        1, 2, 5, 2, 6, 5   // Правая грань
-    )
-
     private val colors = floatArrayOf(
-        1.0f, 0.0f, 0.0f, 1.0f,  // Красный
-        0.0f, 1.0f, 0.0f, 1.0f,  // Зеленый
-        0.0f, 0.0f, 1.0f, 1.0f,  // Синий
-        1.0f, 1.0f, 0.0f, 1.0f,  // Желтый
-        1.0f, 0.0f, 1.0f, 1.0f,  // Фиолетовый
-        0.0f, 1.0f, 1.0f, 1.0f,  // Голубой
-        1.0f, 1.0f, 1.0f, 1.0f,  // Белый
-        0.0f, 0.0f, 0.0f, 1.0f   // Черный
+        0.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 0.5f, 0.0f, 1.0f,
+        1.0f, 0.5f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f,  //1.0f,  0.0f,  1.0f,  1.0f
     )
+    private val indices = byteArrayOf(
+        0, 4, 5, 0, 5, 1,
+        1, 5, 6, 1, 6, 2,
+        2, 6, 7, 2, 7, 3,
+        3, 7, 4, 3, 4, 0,
+        4, 7, 6, 4, 6, 5,
+        3, 0, 1, 3, 1, 2
+    )
+    init{
+        var byteBuf = ByteBuffer.allocateDirect(vertices.size * 4)
+        byteBuf.order(ByteOrder.nativeOrder())
+        mVertexBuffer = byteBuf.asFloatBuffer()
+        mVertexBuffer.put(vertices)
+        mVertexBuffer.position(0)
 
-    private lateinit var vertexBuffer: FloatBuffer
-    private lateinit var indexBuffer: ByteBuffer
-    private lateinit var colorBuffer: FloatBuffer
+        byteBuf = ByteBuffer.allocateDirect(colors.size * 4)
+        byteBuf.order(ByteOrder.nativeOrder())
+        mColorBuffer = byteBuf.asFloatBuffer()
+        mColorBuffer.put(colors)
+        mColorBuffer.position(0)
 
-    init {
-        try {
-            // Буфер для вершин
-            val vb = ByteBuffer.allocateDirect(vertices.size * 4)
-            vb.order(ByteOrder.nativeOrder())
-            vertexBuffer = vb.asFloatBuffer()
-            vertexBuffer.put(vertices)
-            vertexBuffer.position(0)
-
-            // Буфер для индексов
-            indexBuffer = ByteBuffer.allocateDirect(indices.size)
-            indexBuffer.put(indices)
-            indexBuffer.position(0)
-
-            // Буфер для цветов
-            val cb = ByteBuffer.allocateDirect(colors.size * 4)
-            cb.order(ByteOrder.nativeOrder())
-            colorBuffer = cb.asFloatBuffer()
-            colorBuffer.put(colors)
-            colorBuffer.position(0)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        mIndexBuffer = ByteBuffer.allocateDirect(indices.size)
+        mIndexBuffer.put(indices)
+        mIndexBuffer.position(0)
     }
 
     fun draw(gl: GL10) {
+        //gl.glFrontFace(GL10.GL_CW);
+        // gl.glEnable(GL10.GL_BACK);
+
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer)
+        gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer)
+
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glEnableClientState(GL10.GL_COLOR_ARRAY)
 
-        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer)
-        gl.glColorPointer(4, GL10.GL_FLOAT, 0, colorBuffer)
-
-        gl.glDrawElements(GL10.GL_TRIANGLES, indices.size, GL10.GL_UNSIGNED_BYTE, indexBuffer)
+        gl.glDrawElements(
+            GL10.GL_TRIANGLES, 36, GL10.GL_UNSIGNED_BYTE,
+            mIndexBuffer
+        )
 
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glDisableClientState(GL10.GL_COLOR_ARRAY)
+        // gl.glDisable(GL10.GL_CULL_FACE);
     }
-}
 
+}
 
