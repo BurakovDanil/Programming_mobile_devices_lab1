@@ -1,9 +1,11 @@
 package com.example.myapplication
 
+import android.content.Intent
+import android.opengl.GLSurfaceView
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,8 +14,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -22,19 +28,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.delay
 import kotlin.random.Random
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.rememberScrollState
 
 
 data class AdvertisementItem(
@@ -96,7 +100,7 @@ class AdvertisementViewModel : ViewModel(){
 }
 
 @Composable
-private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel()) {
+private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel(), activity: MainActivity) {
     LaunchedEffect(Unit) {
         while (true) {
             delay(5000)
@@ -111,6 +115,20 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel())
         Row(Modifier.weight(1f)) {
             Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[2], onLike = { viewModel.likeAdvertisement(it) })
             Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[3], onLike = { viewModel.likeAdvertisement(it) })
+        }
+
+        // Добавляем кнопку для перехода на экран с кубом
+        Spacer(modifier = Modifier.height(16.dp)) // Добавляем отступ
+        Button(
+            onClick = {
+                // Запускаем CubeActivity по нажатию кнопки
+                activity.startActivity(Intent(activity, CubeActivity::class.java))
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Text(text = "Показать Куб")
         }
     }
 }
@@ -161,13 +179,48 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
     }
 }
 
-
-
 class MainActivity : ComponentActivity() {
+
+    private lateinit var glSurfaceView: GLSurfaceView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            AdvertisementWindow()
+
+        // Создаем GLSurfaceView для рендеринга OpenGL
+        glSurfaceView = GLSurfaceView(this).apply {
+            setEGLContextClientVersion(1)
+            setRenderer(MyRenderer())  // Используем рендерер для куба
+            renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
         }
+
+        setContent {
+            // Управляем состоянием: показывать новости или куб
+            var showCube by remember { mutableStateOf(false) }
+
+            Column(modifier = Modifier.fillMaxSize()) {
+                if (showCube) {
+                    // Отображаем OpenGL куб
+                    AndroidView(factory = { glSurfaceView })
+                } else {
+                    // Отображаем новости
+                    //AdvertisementWindow()
+                }
+
+                // Кнопка для переключения между новостями и кубом
+                Button(
+                    onClick = { showCube = !showCube },  // Переключение состояния
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(text = if (showCube) "Показать новости" else "Показать куб")
+                }
+            }
+        }
+
+        // Устанавливаем флаг для предотвращения выключения экрана
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }
+
+
