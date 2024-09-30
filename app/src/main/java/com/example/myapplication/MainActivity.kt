@@ -100,7 +100,7 @@ class AdvertisementViewModel : ViewModel(){
 }
 
 @Composable
-private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel(), activity: MainActivity) {
+private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel()) {
     LaunchedEffect(Unit) {
         while (true) {
             delay(5000)
@@ -117,7 +117,7 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel(),
             Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[3], onLike = { viewModel.likeAdvertisement(it) })
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        /*Spacer(modifier = Modifier.height(16.dp))
         Button(
             onClick = {
                 activity.startActivity(Intent(activity, CubeActivity::class.java))
@@ -126,6 +126,14 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel(),
         ) {
             Text(text = "Show cube")
         }
+        Button(
+            onClick = {
+                activity.startActivity(Intent(activity, CubeActivity::class.java))
+            },
+            modifier = Modifier.padding(16.dp).fillMaxWidth()
+        ) {
+            Text(text = "Show advertisment")
+        }*/
     }
 }
 
@@ -187,14 +195,11 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            var showCube by remember { mutableStateOf(false) }
+            var showCube by remember { mutableStateOf(true) }
 
             Column(modifier = Modifier.fillMaxSize()) {
-                if (showCube) {
-                    AndroidView(factory = { glSurfaceView })
-                } else {
-                    //AdvertisementWindow()
-                }
+
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Button(
                     onClick = { showCube = !showCube },
@@ -202,7 +207,13 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(text = if (showCube) "Show news" else "Show cube")
+                    Text(text = if(showCube) "Show news" else "Show cube")
+                }
+
+                if (showCube) {
+                    AndroidView(factory = { glSurfaceView })
+                } else {
+                    AdvertisementWindow()
                 }
             }
         }

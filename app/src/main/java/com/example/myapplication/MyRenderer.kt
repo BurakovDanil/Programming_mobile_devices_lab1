@@ -27,7 +27,7 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         // Очистка экрана и буфера глубины
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT or GL10.GL_DEPTH_BUFFER_BIT)
 
-        // Отрисовка фона (текстурированный квадрат)
+        // (текстурированный квадрат)
         gl.glLoadIdentity()
         gl.glTranslatef(0f, 0f, -5f)  // Отодвигаем квадрат на задний план
         gl.glScalef(5f, 5f, 2f)       // Масштабируем, чтобы покрывал весь экран

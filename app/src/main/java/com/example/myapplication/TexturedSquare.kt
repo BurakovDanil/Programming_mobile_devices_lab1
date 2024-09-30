@@ -48,9 +48,7 @@ class TexturedSquare(private val context: Context) {
         bitmap.recycle()
     }
 
-    // Отрисовка квадрата с текстурой
     fun draw(gl: GL10) {
-        // Включаем поддержку массивов вершин и текстурных координат
         GLES10.glEnableClientState(GLES10.GL_VERTEX_ARRAY)
         GLES10.glEnableClientState(GLES10.GL_TEXTURE_COORD_ARRAY)
 
