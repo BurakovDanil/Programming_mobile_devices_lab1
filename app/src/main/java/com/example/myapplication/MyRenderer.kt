@@ -11,6 +11,7 @@ import javax.microedition.khronos.opengles.GL10
 class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private val square = TexturedSquare(context)
     private val cube = Cube()
+    private var rotationAngle = 0f
 
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
         // Настройка среды
@@ -33,10 +34,14 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         gl.glScalef(5f, 5f, 2f)       // Масштабируем, чтобы покрывал весь экран
         square.draw(gl)
 
-        // Отрисовка куба
         gl.glLoadIdentity()
-        gl.glTranslatef(0f, 0f, -4f)  // Центрируем куб и отодвигаем на небольшое расстояние
-        gl.glRotatef(30f, 1f, 1f, 1f) // Поворот куба
+        gl.glTranslatef(0f, 0f, -4f)
+        //gl.glRotatef(30f, 1f, 1f, 1f)
+        rotationAngle += 1f
+        if (rotationAngle >= 360) {
+            rotationAngle = 0f
+        }
+        gl.glRotatef(rotationAngle, 1f, 1f, 1f)
 
         // Отключаем текстуру перед отрисовкой куба
         gl.glDisable(GL10.GL_TEXTURE_2D)
