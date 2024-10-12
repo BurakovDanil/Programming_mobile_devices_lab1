@@ -73,11 +73,14 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
         // (текстурированный квадрат)
         gl.glLoadIdentity()
-        gl.glTranslatef(0f, 0f, -55f)  // Отодвигаем квадрат на задний план
-        gl.glScalef(25f, 25f, 2f)       // Масштабируем, чтобы покрывал весь экран
+        gl.glTranslatef(0f, 0f, -30f)  // Отодвигаем квадрат на задний план
+        gl.glPushMatrix() // Сохраняем состояние матрицы для фона
+        gl.glTranslatef(0f, 0f, -35f)  // Отодвигаем фон дальше от планет
+        gl.glScalef(25f, 25f, 1.5f)       // Масштабируем, чтобы покрывал весь экран
         // Включаем текстуру снова, если это нужно для следующей отрисовки
         gl.glEnable(GL10.GL_TEXTURE_2D)
         square.draw(gl)
+        gl.glPopMatrix()
 
         /*gl.glLoadIdentity()
         gl.glTranslatef(0f, 0f, -4f)
@@ -95,10 +98,11 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         cube.draw(gl)
 */
 
-        // Рисуем Солнце
-        gl.glLoadIdentity()
-        gl.glTranslatef(0f, 0f, -25f)
+        // Рисуем Солнце в центре сцены
+        gl.glPushMatrix()  // Сохраняем текущее состояние матрицы
+        gl.glTranslatef(0f, 0f, -10f)  // Солнце в центре координат (не смещено)
         sun.draw(gl)
+        gl.glPopMatrix()  // Восстанавливаем матрицу для рисования планет
 
         // Рисуем Меркурий
         drawPlanet(gl, mercury, 3f, mercuryOrbit)
@@ -123,6 +127,7 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
         // Рисуем Нептун
         drawPlanet(gl, neptune, 21f, neptuneOrbit)
+
 
         // Обновляем углы вращения для следующего кадра
         updateOrbits()
