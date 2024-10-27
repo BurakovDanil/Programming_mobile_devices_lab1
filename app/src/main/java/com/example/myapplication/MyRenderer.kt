@@ -9,10 +9,11 @@ import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class MyRenderer(private val context: Context, private var selectedPlanetIndex: Int) : GLSurfaceView.Renderer {
+class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private val square = TexturedSquare(context)
     private val cube = Cube()
     private var rotationAngle = 0f
+    private var selectedPlanetIndex = 0
 
     private val sun = Sphere(2f)  // Солнце
     private val mercury = Sphere(0.2f)
@@ -35,6 +36,12 @@ class MyRenderer(private val context: Context, private var selectedPlanetIndex: 
     private var neptuneOrbit = 0f
     private var moonOrbit = 0f
 
+    fun IndexPlus(){
+        selectedPlanetIndex = (selectedPlanetIndex + 1) % 8
+    }
+    fun IndexMin(){
+        selectedPlanetIndex = (selectedPlanetIndex - 1) % 8
+    }
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig){
         gl.glClearColor(0f, 0f, 0f, 1f)
 
@@ -116,7 +123,6 @@ class MyRenderer(private val context: Context, private var selectedPlanetIndex: 
             gl.glDisable(GL10.GL_BLEND)
             gl.glPopMatrix()
         }
-
         gl.glPopMatrix()
     }
 

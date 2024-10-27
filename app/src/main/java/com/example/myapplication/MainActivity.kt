@@ -177,10 +177,10 @@ class MainActivity : ComponentActivity() {
             var selectedPlanetIndex by remember { mutableStateOf(0) }
             glSurfaceView = GLSurfaceView(this).apply {
                 setEGLContextClientVersion(1)
-                setRenderer(MyRenderer(this@MainActivity, selectedPlanetIndex))
+                renderer = MyRenderer(this@MainActivity)
+                setRenderer(renderer)
                 renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
             }
-
             Column(modifier = Modifier.fillMaxSize()) {
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -202,8 +202,8 @@ class MainActivity : ComponentActivity() {
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Button(onClick = {
-                            selectedPlanetIndex = (selectedPlanetIndex - 1) % 8
-                            glSurfaceView.requestRender()
+                            renderer.IndexPlus()
+                            selectedPlanetIndex = (selectedPlanetIndex + 1) % 8
                         }) {
                             Text("Влево")
                         }
@@ -228,8 +228,8 @@ class MainActivity : ComponentActivity() {
                             Text("Информация")
                         }
                         Button(onClick = {
-                            selectedPlanetIndex = (selectedPlanetIndex + 1) % 8
-                            glSurfaceView.requestRender()
+                            renderer.IndexMin()
+                            selectedPlanetIndex = (selectedPlanetIndex - 1) % 8
                         }) {
                             Text("Вправо")
                         }
