@@ -229,7 +229,7 @@ class MainActivity : ComponentActivity() {
                         }
                         Button(onClick = {
                             renderer.IndexMin()
-                            selectedPlanetIndex = (selectedPlanetIndex - 1) % 8
+                            selectedPlanetIndex = (selectedPlanetIndex + 7) % 8
                         }) {
                             Text("Вправо")
                         }
