@@ -181,6 +181,7 @@ class MainActivity : ComponentActivity() {
                 setRenderer(renderer)
                 renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
             }
+            selectedPlanetIndex = renderer.GettingIndex
             Column(modifier = Modifier.fillMaxSize()) {
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -203,7 +204,7 @@ class MainActivity : ComponentActivity() {
                     ) {
                         Button(onClick = {
                             renderer.IndexPlus()
-                            selectedPlanetIndex = (selectedPlanetIndex + 1) % 8
+                            selectedPlanetIndex = renderer.GettingIndex
                         }) {
                             Text("Влево")
                         }
@@ -229,7 +230,7 @@ class MainActivity : ComponentActivity() {
                         }
                         Button(onClick = {
                             renderer.IndexMin()
-                            selectedPlanetIndex = (selectedPlanetIndex + 7) % 8
+                            selectedPlanetIndex = renderer.GettingIndex
                         }) {
                             Text("Вправо")
                         }

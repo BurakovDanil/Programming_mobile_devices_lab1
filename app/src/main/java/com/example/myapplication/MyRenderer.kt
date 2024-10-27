@@ -42,6 +42,9 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     fun IndexMin(){
         selectedPlanetIndex = (selectedPlanetIndex + 7) % 8
     }
+    val GettingIndex: Int
+        get() = selectedPlanetIndex
+
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig){
         gl.glClearColor(0f, 0f, 0f, 1f)
 
