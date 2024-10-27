@@ -194,6 +194,7 @@ class MainActivity : ComponentActivity() {
 
 
 
+
         setContent {
             var showCube by remember { mutableStateOf(true) }
             var selectedPlanetIndex by remember { mutableStateOf(0) }
@@ -202,6 +203,7 @@ class MainActivity : ComponentActivity() {
                 setRenderer(MyRenderer(this@MainActivity, selectedPlanetIndex))
                 renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
             }
+
             Column(modifier = Modifier.fillMaxSize()) {
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -212,19 +214,21 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(text = if(showCube) "Show news" else "Show solar sistem")
+                    Text(text = if (showCube) "Show news" else "Show solar system")
                 }
-                Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex - 1 + 8) % 8 }) {
-                    Text("Влево")
-                }
+
                 if (showCube) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(24.dp),
                         horizontalArrangement = Arrangement.SpaceAround
-
-                    ){
+                    ) {
+                        Button(onClick = {
+                            selectedPlanetIndex = (selectedPlanetIndex - 1 + 8) % 8
+                        }) {
+                            Text("Влево")
+                        }
                         Button(onClick = {
                             val planetName = when (selectedPlanetIndex) {
                                 0 -> "Меркурий"
@@ -235,7 +239,6 @@ class MainActivity : ComponentActivity() {
                                 5 -> "Сатурн"
                                 6 -> "Уран"
                                 7 -> "Нептун"
-                                else -> "Неизвестная планета"
                             }
                             Toast.makeText(
                                 this@MainActivity,
@@ -249,13 +252,14 @@ class MainActivity : ComponentActivity() {
                             Text("Вправо")
                         }
                     }
+
                     AndroidView(factory = { glSurfaceView })
                 } else {
                     AdvertisementWindow()
                 }
             }
+            window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 }
 
