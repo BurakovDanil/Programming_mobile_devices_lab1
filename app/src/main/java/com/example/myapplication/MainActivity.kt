@@ -239,6 +239,7 @@ class MainActivity : ComponentActivity() {
                                 5 -> "Сатурн"
                                 6 -> "Уран"
                                 7 -> "Нептун"
+                                else -> ""
                             }
                             Toast.makeText(
                                 this@MainActivity,
