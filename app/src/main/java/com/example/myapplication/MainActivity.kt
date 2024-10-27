@@ -118,24 +118,6 @@ private fun AdvertisementWindow(viewModel: AdvertisementViewModel = viewModel())
             Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[2], onLike = { viewModel.likeAdvertisement(it) })
             Advertisement(modifier = Modifier.weight(1f), advertisement = viewModel.displayedAdvertisements[3], onLike = { viewModel.likeAdvertisement(it) })
         }
-
-        /*Spacer(modifier = Modifier.height(16.dp))
-        Button(
-            onClick = {
-                activity.startActivity(Intent(activity, CubeActivity::class.java))
-            },
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
-        ) {
-            Text(text = "Show cube")
-        }
-        Button(
-            onClick = {
-                activity.startActivity(Intent(activity, CubeActivity::class.java))
-            },
-            modifier = Modifier.padding(16.dp).fillMaxWidth()
-        ) {
-            Text(text = "Show advertisment")
-        }*/
     }
 }
 
@@ -184,16 +166,11 @@ private fun Advertisement(modifier: Modifier = Modifier, advertisement: Advertis
 }
 
 class MainActivity : ComponentActivity() {
-
+    private lateinit var renderer: MyRenderer
     private lateinit var glSurfaceView: GLSurfaceView
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
-
 
         setContent {
             var showCube by remember { mutableStateOf(true) }
@@ -225,7 +202,8 @@ class MainActivity : ComponentActivity() {
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Button(onClick = {
-                            selectedPlanetIndex = (selectedPlanetIndex - 1 + 8) % 8
+                            selectedPlanetIndex = (selectedPlanetIndex - 1) % 8
+                            glSurfaceView.requestRender()
                         }) {
                             Text("Влево")
                         }
@@ -249,7 +227,10 @@ class MainActivity : ComponentActivity() {
                         }) {
                             Text("Информация")
                         }
-                        Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex + 1) % 8 }) {
+                        Button(onClick = {
+                            selectedPlanetIndex = (selectedPlanetIndex + 1) % 8
+                            glSurfaceView.requestRender()
+                        }) {
                             Text("Вправо")
                         }
                     }

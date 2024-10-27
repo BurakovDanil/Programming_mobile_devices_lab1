@@ -35,9 +35,6 @@ class MyRenderer(private val context: Context, private var selectedPlanetIndex: 
     private var neptuneOrbit = 0f
     private var moonOrbit = 0f
 
-    //private var angleEarthOrbit = 0f
-    //private var angleMoonOrbit = 0f
-
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig){
         gl.glClearColor(0f, 0f, 0f, 1f)
 
@@ -64,14 +61,12 @@ class MyRenderer(private val context: Context, private var selectedPlanetIndex: 
     }
 
     override fun onDrawFrame(gl: GL10) {
-        // Очистка экрана и буфера глубины
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT or GL10.GL_DEPTH_BUFFER_BIT)
 
-        // (текстурированный квадрат)
         gl.glLoadIdentity()
-        gl.glTranslatef(0f, 0f, -30f)  // Отодвигаем квадрат на задний план
-        gl.glPushMatrix() // Сохраняем состояние матрицы для фона
-        gl.glTranslatef(0f, 0f, -35f)  // Отодвигаем фон дальше от планет
+        gl.glTranslatef(0f, 0f, -30f)
+        gl.glPushMatrix()
+        gl.glTranslatef(0f, 0f, -35f)
         gl.glScalef(25f, 25f, 1.5f)
 
         gl.glEnable(GL10.GL_TEXTURE_2D)
