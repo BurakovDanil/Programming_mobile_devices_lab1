@@ -17,7 +17,7 @@ class Sphere(private val radius: Float) {
     private val textureBuffer: FloatBuffer
     private val indexBuffer: ShortBuffer
     private var textureId = 0
-    private var rotationAngle = 0f // Угол вращения для Солнца
+    private var rotationAngle = 0f
 
     init {
         val numSlices = 36
@@ -71,7 +71,6 @@ class Sphere(private val radius: Float) {
             }
         }
 
-        // Инициализация буферов
         vertexBuffer = ByteBuffer.allocateDirect(vertices.size * 4)
             .order(ByteOrder.nativeOrder())
             .asFloatBuffer().apply {
@@ -112,21 +111,17 @@ class Sphere(private val radius: Float) {
     }
 
     fun draw(gl: GL10) {
-        // Добавляем вращение для Солнца
-        gl.glPushMatrix()  // Сохраняем текущую матрицу
-        gl.glRotatef(rotationAngle, 0f, 1f, 0f) // Вращаем объект вокруг оси Y (вокруг своей оси)
+        gl.glPushMatrix()
+        gl.glRotatef(rotationAngle, 0f, 1f, 0f)
 
-        // Привязка текстуры
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId)
 
-        // Включаем массивы вершин и текстурных координат
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY)
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer)
         gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer)
 
-        // Рисуем сферу
         gl.glDrawElements(
             GL10.GL_TRIANGLES,
             indexBuffer.capacity(),
@@ -134,7 +129,6 @@ class Sphere(private val radius: Float) {
             indexBuffer
         )
 
-        // Отключаем массивы
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY)
 
@@ -142,7 +136,7 @@ class Sphere(private val radius: Float) {
 
         rotationAngle += 0.5f
         if (rotationAngle >= 360f) {
-            rotationAngle = 0f // Сброс угла после полного оборота
+            rotationAngle = 0f
         }
     }
 }

@@ -56,9 +56,13 @@ class Cube {
         mIndexBuffer.position(0)
     }
 
-    fun draw(gl: GL10) {
-        //gl.glFrontFace(GL10.GL_CW);
-        // gl.glEnable(GL10.GL_BACK);
+    fun draw(gl: GL10, planetRadius: Float) {
+        gl.glEnable(GL10.GL_BLEND)
+        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA)
+
+        val scale = planetRadius * 1.5f
+        gl.glPushMatrix()
+        gl.glScalef(scale, scale, scale)
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer)
         gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer)
@@ -66,14 +70,13 @@ class Cube {
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glEnableClientState(GL10.GL_COLOR_ARRAY)
 
-        gl.glDrawElements(
-            GL10.GL_TRIANGLES, 36, GL10.GL_UNSIGNED_BYTE,
-            mIndexBuffer
-        )
+        gl.glDrawElements(GL10.GL_TRIANGLES, indices.size, GL10.GL_UNSIGNED_BYTE, mIndexBuffer)
 
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glDisableClientState(GL10.GL_COLOR_ARRAY)
-        // gl.glDisable(GL10.GL_CULL_FACE);
+
+        gl.glPopMatrix()
+        gl.glDisable(GL10.GL_BLEND)
     }
 
 }
