@@ -214,44 +214,45 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Text(text = if(showCube) "Show news" else "Show solar sistem")
                 }
-
+                Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex - 1 + 8) % 8 }) {
+                    Text("Влево")
+                }
                 if (showCube) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(24.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
+
+                    ){
+                        Button(onClick = {
+                            val planetName = when (selectedPlanetIndex) {
+                                0 -> "Меркурий"
+                                1 -> "Венера"
+                                2 -> "Земля"
+                                3 -> "Марс"
+                                4 -> "Юпитер"
+                                5 -> "Сатурн"
+                                6 -> "Уран"
+                                7 -> "Нептун"
+                                else -> "Неизвестная планета"
+                            }
+                            Toast.makeText(
+                                this@MainActivity,
+                                "Выбрана планета: $planetName",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }) {
+                            Text("Информация")
+                        }
+                        Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex + 1) % 8 }) {
+                            Text("Вправо")
+                        }
+                    }
                     AndroidView(factory = { glSurfaceView })
                 } else {
                     AdvertisementWindow()
                 }
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex - 1 + 8) % 8 }) {
-                        Text("Влево")
-                    }
-                    Button(onClick = {
-                        // Логика для отображения информации о планете
-                        val planetName = when (selectedPlanetIndex) {
-                            0 -> "Меркурий"
-                            1 -> "Венера"
-                            2 -> "Земля"
-                            3 -> "Марс"
-                            4 -> "Юпитер"
-                            5 -> "Сатурн"
-                            6 -> "Уран"
-                            7 -> "Нептун"
-                            else -> "Неизвестная планета"
-                        }
-                        // Показать информацию в тосте или диалоге
-                        Toast.makeText(this@MainActivity, "Выбрана планета: $planetName", Toast.LENGTH_SHORT).show()
-                    }) {
-                        Text("Информация")
-                    }
-                    Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex + 1) % 8 }) {
-                        Text("Вправо")
-                    }
-                }
-
             }
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)

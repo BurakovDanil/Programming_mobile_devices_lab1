@@ -20,7 +20,6 @@ class Sphere(private val radius: Float) {
     private var rotationAngle = 0f // Угол вращения для Солнца
 
     init {
-        // Инициализация буферов (тот же код, что был ранее)
         val numSlices = 36
         val numStacks = 18
 
@@ -127,7 +126,7 @@ class Sphere(private val radius: Float) {
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer)
         gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, textureBuffer)
 
-        // Рисуем сферу (Солнце)
+        // Рисуем сферу
         gl.glDrawElements(
             GL10.GL_TRIANGLES,
             indexBuffer.capacity(),
@@ -139,10 +138,9 @@ class Sphere(private val radius: Float) {
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY)
 
-        gl.glPopMatrix() // Восстанавливаем матрицу после вращения
+        gl.glPopMatrix()
 
-        // Увеличиваем угол вращения
-        rotationAngle += 0.5f // Скорость вращения (измените при необходимости)
+        rotationAngle += 0.5f
         if (rotationAngle >= 360f) {
             rotationAngle = 0f // Сброс угла после полного оборота
         }
