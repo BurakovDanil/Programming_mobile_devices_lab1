@@ -4,10 +4,12 @@ import android.content.Intent
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -185,18 +187,21 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var glSurfaceView: GLSurfaceView
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        glSurfaceView = GLSurfaceView(this).apply {
-            setEGLContextClientVersion(1)
-            setRenderer(MyRenderer(this@MainActivity))
-            renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
-        }
+
 
         setContent {
             var showCube by remember { mutableStateOf(true) }
-
+            var selectedPlanetIndex by remember { mutableStateOf(0) }
+            glSurfaceView = GLSurfaceView(this).apply {
+                setEGLContextClientVersion(1)
+                setRenderer(MyRenderer(this@MainActivity, selectedPlanetIndex))
+                renderMode = GLSurfaceView.RENDERMODE_CONTINUOUSLY
+            }
             Column(modifier = Modifier.fillMaxSize()) {
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -207,7 +212,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxWidth()
                         .padding(16.dp)
                 ) {
-                    Text(text = if(showCube) "Show news" else "Show cube")
+                    Text(text = if(showCube) "Show news" else "Show solar sistem")
                 }
 
                 if (showCube) {
@@ -215,6 +220,38 @@ class MainActivity : ComponentActivity() {
                 } else {
                     AdvertisementWindow()
                 }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex - 1 + 8) % 8 }) {
+                        Text("Влево")
+                    }
+                    Button(onClick = {
+                        // Логика для отображения информации о планете
+                        val planetName = when (selectedPlanetIndex) {
+                            0 -> "Меркурий"
+                            1 -> "Венера"
+                            2 -> "Земля"
+                            3 -> "Марс"
+                            4 -> "Юпитер"
+                            5 -> "Сатурн"
+                            6 -> "Уран"
+                            7 -> "Нептун"
+                            else -> "Неизвестная планета"
+                        }
+                        // Показать информацию в тосте или диалоге
+                        Toast.makeText(this@MainActivity, "Выбрана планета: $planetName", Toast.LENGTH_SHORT).show()
+                    }) {
+                        Text("Информация")
+                    }
+                    Button(onClick = { selectedPlanetIndex = (selectedPlanetIndex + 1) % 8 }) {
+                        Text("Вправо")
+                    }
+                }
+
             }
         }
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
