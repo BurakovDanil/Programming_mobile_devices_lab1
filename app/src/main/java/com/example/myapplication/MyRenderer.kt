@@ -64,7 +64,6 @@ class MyRenderer(private val context: Context, private var selectedPlanetIndex: 
         uranus.loadTexture(gl, context, R.drawable.uranus)
         neptune.loadTexture(gl, context, R.drawable.neptune)
         moon.loadTexture(gl, context, R.drawable.moon)
-
     }
 
     override fun onDrawFrame(gl: GL10) {
