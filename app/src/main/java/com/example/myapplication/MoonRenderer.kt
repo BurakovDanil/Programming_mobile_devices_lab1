@@ -25,8 +25,7 @@ class MoonView(context: Context) : GLSurfaceView(context) {
         private val projectionMatrix = FloatArray(16)  // Матрица проекции
         private val mvpMatrix = FloatArray(16)  // Матрица MVP (модель + вид + проекция)
         private var textureId = 0  // Идентификатор текстуры
-        private var angle = 0f  // Угол вращения Луны
-        private val lightPosition = floatArrayOf(4f, 5f, 5f)  // Позиция источника света
+        private val lightPosition = floatArrayOf(3f, 5f, 6f)  // Позиция источника света
 
         override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
             // Настройка начальных параметров OpenGL
@@ -48,9 +47,7 @@ class MoonView(context: Context) : GLSurfaceView(context) {
         override fun onDrawFrame(gl: GL10?) {
             // Отрисовываем каждый кадр
             GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)  // Очищаем экран и буфер глубины
-            angle += 0.4f  // Увеличиваем угол вращения Луны
             Matrix.setIdentityM(modelMatrix, 0)  // Сбрасываем матрицу модели
-            Matrix.rotateM(modelMatrix, 0, angle, 0f, 1f, 0f)  // Вращаем Луну по оси Y
             Matrix.multiplyMM(mvpMatrix, 0, viewMatrix, 0, modelMatrix, 0)  // Применяем матрицу вида к модели
             Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0)  // Применяем проекцию
 
@@ -150,7 +147,7 @@ class MoonView(context: Context) : GLSurfaceView(context) {
             void main() {
                 vec3 normal = normalize(vNormal);
                 vec3 lightDir = normalize(uLightPosition - vPosition);
-                float lightIntensity = 1.5;  // Множитель интенсивности света
+                float lightIntensity = 1.9;  // Множитель интенсивности света
                 float diff = max(dot(normal, lightDir), 0.0) * lightIntensity;
                 vec3 diffuse = diff * vec3(1.0, 1.0, 1.0);
                 vec4 textureColor = texture2D(uTexture, vTexCoordinate);
