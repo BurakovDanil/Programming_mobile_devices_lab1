@@ -3,15 +3,16 @@ package com.example.myapplication
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.opengl.GLU
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.FloatBuffer
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
-class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
+class MyRenderer(private val context: Context, private var selectedPlanetIndex: Int) : GLSurfaceView.Renderer {
     private val square = TexturedSquare(context)
     private val cube = Cube()
     private var rotationAngle = 0f
-
-    private var selectedPlanetIndex = 0
 
     private val sun = Sphere(2f)  // Солнце
     private val mercury = Sphere(0.2f)
@@ -24,19 +25,7 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private val neptune = Sphere(0.8f)
     private val moon = Sphere(0.1f) // Луна
 
-    // Массив радиусов планет
-    private val planetRadii = floatArrayOf(
-        0.2f, // Меркурий
-        0.5f, // Венера
-        0.5f, // Земля
-        0.3f, // Марс
-        1.5f, // Юпитер
-        1.2f, // Сатурн
-        1.0f, // Уран
-        0.8f,  // Нептун
-        0.1f  // Луна
-    )
-
+    // Переменные для углов вращения
     private var mercuryOrbit = 0f
     private var venusOrbit = 0f
     private var earthOrbit = 0f
@@ -47,21 +36,24 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private var neptuneOrbit = 0f
     private var moonOrbit = 0f
 
-    fun setSelectedPlanetIndexPlus() {
-        selectedPlanetIndex = (selectedPlanetIndex + 1) % 9
-    }
-
-    fun setSelectedPlanetIndexMinus() {
-        selectedPlanetIndex = (selectedPlanetIndex - 1  + 9) % 9
-    }
+    //private var angleEarthOrbit = 0f
+    //private var angleMoonOrbit = 0f
 
     override fun onSurfaceCreated(gl: GL10, config: EGLConfig) {
+        // Настройка среды
         gl.glClearColor(0f, 0f, 0f, 1f)
+
         gl.glEnable(GL10.GL_TEXTURE_2D)
         gl.glEnable(GL10.GL_DEPTH_TEST)
 
-        // Загрузка текстур
+        // Загрузка текстуры для квадрата
         square.loadTexture(gl)
+
+        gl.glClearColor(0f, 0f, 0f, 1f)
+        gl.glEnable(GL10.GL_DEPTH_TEST)
+        gl.glEnable(GL10.GL_TEXTURE_2D)
+
+        // Загрузка текстур для планет
         sun.loadTexture(gl, context, R.drawable.sun)
         mercury.loadTexture(gl, context, R.drawable.mercury)
         venus.loadTexture(gl, context, R.drawable.venus)
@@ -76,51 +68,72 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     }
 
     override fun onDrawFrame(gl: GL10) {
+        // Очистка экрана и буфера глубины
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT or GL10.GL_DEPTH_BUFFER_BIT)
-        gl.glLoadIdentity()
-        gl.glTranslatef(0f, 0f, -30f)
 
-        gl.glPushMatrix()
-        gl.glTranslatef(0f, 0f, -35f)
-        gl.glScalef(25f, 25f, 1.5f)
+        // (текстурированный квадрат)
+        gl.glLoadIdentity()
+        gl.glTranslatef(0f, 0f, -30f)  // Отодвигаем квадрат на задний план
+        gl.glPushMatrix() // Сохраняем состояние матрицы для фона
+        gl.glTranslatef(0f, 0f, -35f)  // Отодвигаем фон дальше от планет
+        gl.glScalef(25f, 25f, 1.5f)       // Масштабируем, чтобы покрывал весь экран
+        // Включаем текстуру снова, если это нужно для следующей отрисовки
         gl.glEnable(GL10.GL_TEXTURE_2D)
         square.draw(gl)
         gl.glPopMatrix()
 
-        // Рисуем Солнце
-        gl.glPushMatrix()
-        gl.glTranslatef(0f, 0f, 0f)
-        sun.draw(gl)
-        gl.glPopMatrix()
+        /*gl.glLoadIdentity()
+        gl.glTranslatef(0f, 0f, -4f)
+        //gl.glRotatef(30f, 1f, 1f, 1f)
+        rotationAngle += 1f
+        if (rotationAngle >= 360) {
+            rotationAngle = 0f
+        }
+        gl.glRotatef(rotationAngle, 1f, 1f, 1f)
 
-        // Рисуем планеты
+        // Отключаем текстуру перед отрисовкой куба
+        gl.glDisable(GL10.GL_TEXTURE_2D)
+
+        // Отрисовка куба
+        cube.draw(gl)
+*/
+
+        // Рисуем Солнце в центре сцены
+        gl.glPushMatrix()  // Сохраняем текущее состояние матрицы
+        gl.glTranslatef(0f, 0f, 0f)  // Солнце в центре координат (не смещено)
+        sun.draw(gl)
+        gl.glPopMatrix()  // Восстанавливаем матрицу для рисования планет
+
+        // Рисуем Планеты
         drawPlanet(gl, mercury, 3f, mercuryOrbit, 0)
         drawPlanet(gl, venus, 5f, venusOrbit, 1)
-        drawPlanetWithMoon(gl, earth, moon, 7f, earthOrbit, moonOrbit, 2)
+        drawPlanetWithMoon(gl, earth, moon, 7f, earthOrbit, moonOrbit, 2)  // Передайте индекс планеты Земля
         drawPlanet(gl, mars, 9f, marsOrbit, 3)
         drawPlanet(gl, jupiter, 12f, jupiterOrbit, 4)
         drawPlanet(gl, saturn, 15f, saturnOrbit, 5)
         drawPlanet(gl, uranus, 18f, uranusOrbit, 6)
         drawPlanet(gl, neptune, 21f, neptuneOrbit, 7)
 
+        // Обновляем углы вращения для следующего кадра
         updateOrbits()
-
-
     }
 
     private fun drawPlanet(gl: GL10, planet: Sphere, distanceFromSun: Float, orbitAngle: Float, index: Int) {
         gl.glPushMatrix()
-        gl.glTranslatef(0f, 0f, 0f)
-        gl.glRotatef(orbitAngle, 0f, 1f, 0f)
-        gl.glTranslatef(distanceFromSun, 0f, 0f)
+        gl.glTranslatef(0f, 0f, 0f)  // Центр Солнечной системы
+        gl.glRotatef(orbitAngle, 0f, 1f, 0f)  // Орбитальное вращение планеты
+        gl.glTranslatef(distanceFromSun, 0f, 0f)  // Расстояние от Солнца
+
+        // Отрисовка планеты
         planet.draw(gl)
 
+        // Если эта планета выбрана, отрисовываем полупрозрачный куб вокруг неё
         if (index == selectedPlanetIndex) {
             gl.glPushMatrix()
             gl.glEnable(GL10.GL_BLEND)
             gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA)
-            val planetRadius = planetRadii[index]
-            cube.draw(gl, planetRadius)
+            gl.glColor4f(1f, 1f, 1f, 0.3f)  // Полупрозрачный цвет для куба
+            cube.draw(gl)  // Отрисовка куба
             gl.glDisable(GL10.GL_BLEND)
             gl.glPopMatrix()
         }
@@ -130,58 +143,56 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
 
     private fun drawPlanetWithMoon(gl: GL10, planet: Sphere, moon: Sphere, distanceFromSun: Float, planetOrbit: Float, moonOrbit: Float, index: Int) {
         gl.glPushMatrix()
-        gl.glTranslatef(0f, 0f, 0f)
-        gl.glRotatef(planetOrbit, 0f, 1f, 0f)
-        gl.glTranslatef(distanceFromSun, 0f, 0f)
+        gl.glTranslatef(0f, 0f, 0f)  // Центр Солнечной системы
+        gl.glRotatef(planetOrbit, 0f, 1f, 0f)  // Орбитальное вращение планеты
+        gl.glTranslatef(distanceFromSun, 0f, 0f)  // Расстояние от Солнца
+
+        // Рисуем планету
         planet.draw(gl)
+
+        // Если эта планета выбрана, отрисовываем полупрозрачный куб вокруг неё
         if (index == selectedPlanetIndex) {
             gl.glPushMatrix()
             gl.glEnable(GL10.GL_BLEND)
             gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA)
-            val planetRadius = planetRadii[index]
-            cube.draw(gl, planetRadius)
+            gl.glColor4f(1f, 1f, 1f, 0.3f)  // Полупрозрачный цвет для куба
+            cube.draw(gl)  // Отрисовка куба
             gl.glDisable(GL10.GL_BLEND)
             gl.glPopMatrix()
         }
-
 
         // Рисуем Луну
         gl.glPushMatrix()
-        gl.glRotatef(moonOrbit, 0f, 0f, 1f)
-        gl.glTranslatef(1f, 0f, 0f)
+        gl.glRotatef(moonOrbit, 0f, 0f, 1f)  // Вращение Луны вокруг Земли
+        gl.glTranslatef(1f, 0f, 0f)  // Расстояние Луны от Земли
         moon.draw(gl)
+        gl.glPopMatrix()
 
-
-
-        // Отображаем куб, если выбрана Луна
-        if (selectedPlanetIndex == 8) {
-            gl.glPushMatrix()
-            gl.glEnable(GL10.GL_BLEND)
-            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA)
-            cube.draw(gl, 0.1f) // Размер куба для Луны
-            gl.glDisable(GL10.GL_BLEND)
-            gl.glPopMatrix()
-        }
-        gl.glPopMatrix()// Заканчиваем отрисовку Луны
-
-        gl.glPopMatrix()// Заканчиваем отрисовку планеты
+        gl.glPopMatrix()
     }
+
 
     private fun updateOrbits() {
-        mercuryOrbit += 1.59f
-        venusOrbit += 1.18f
-        earthOrbit += 1f
-        marsOrbit += 0.8f
-        jupiterOrbit += 0.4f
-        saturnOrbit += 0.3f
-        uranusOrbit += 0.2f
-        neptuneOrbit += 0.1f
-        moonOrbit += 2f
+        mercuryOrbit += 1.59f  // Скорость вращения Меркурия
+        venusOrbit += 1.18f  // Скорость вращения Венеры
+        earthOrbit += 1f  // Скорость вращения Земли
+        marsOrbit += 0.8f  // Скорость вращения Марса
+        jupiterOrbit += 0.4f  // Скорость вращения Юпитера
+        saturnOrbit += 0.3f  // Скорость вращения Сатурна
+        uranusOrbit += 0.2f  // Скорость вращения Урана
+        neptuneOrbit += 0.1f  // Скорость вращения Нептуна
+        moonOrbit += 2f  // Вращение Луны вокруг Земли
     }
 
-
-
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
+        // Установка области видимости и проекции
+        /*gl.glViewport(0, 0, width, height)
+        val ratio = width.toFloat() / height
+        gl.glMatrixMode(GL10.GL_PROJECTION)
+        gl.glLoadIdentity()
+        gl.glFrustumf(-ratio, ratio, -1f, 1f, 1f, 10f)
+        gl.glMatrixMode(GL10.GL_MODELVIEW)
+        gl.glLoadIdentity()*/
         gl.glViewport(0, 0, width, height)
         gl.glMatrixMode(GL10.GL_PROJECTION)
         gl.glLoadIdentity()
@@ -190,3 +201,7 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         gl.glLoadIdentity()
     }
 }
+
+
+
+

@@ -10,7 +10,6 @@ class Cube {
     private var mColorBuffer: FloatBuffer
     private var mIndexBuffer: ByteBuffer
 
-
     private val vertices = floatArrayOf(
         -1.0f, -1.0f, -1.0f,
         1.0f, -1.0f, -1.0f,
@@ -21,17 +20,16 @@ class Cube {
         1.0f, 1.0f, 1.0f,
         -1.0f, 1.0f, 1.0f
     )
-    private val colors: FloatArray
-        get() = floatArrayOf(
-            0.0f, 1.0f, 0.0f, 0.3f,
-            0.0f, 1.0f, 0.0f, 0.3f,
-            1.0f, 0.5f, 0.0f, 0.3f,
-            1.0f, 0.5f, 0.0f, 0.3f,
-            1.0f, 0.0f, 1.0f, 0.3f,
-            1.0f, 0.0f, 0.0f, 0.3f,
-            1.0f, 0.0f, 0.0f, 0.3f,
-            0.0f, 0.0f, 1.0f, 0.3f,  //1.0f,  0.0f,  1.0f,  1.0f
-        )
+    private val colors = floatArrayOf(
+        0.0f, 1.0f, 0.0f, 1.0f,
+        0.0f, 1.0f, 0.0f, 1.0f,
+        1.0f, 0.5f, 0.0f, 1.0f,
+        1.0f, 0.5f, 0.0f, 1.0f,
+        1.0f, 0.0f, 1.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, 1.0f,
+        1.0f, 0.0f, 0.0f, 1.0f,
+        0.0f, 0.0f, 1.0f, 1.0f,  //1.0f,  0.0f,  1.0f,  1.0f
+    )
     private val indices = byteArrayOf(
         0, 4, 5, 0, 5, 1,
         1, 5, 6, 1, 6, 2,
@@ -58,12 +56,9 @@ class Cube {
         mIndexBuffer.position(0)
     }
 
-    fun draw(gl: GL10, planetRadius: Float) {
+    fun draw(gl: GL10) {
         //gl.glFrontFace(GL10.GL_CW);
         // gl.glEnable(GL10.GL_BACK);
-        gl.glPushMatrix()
-        val scale = planetRadius * 1.5f
-        gl.glScalef(scale, scale, scale)
 
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, mVertexBuffer)
         gl.glColorPointer(4, GL10.GL_FLOAT, 0, mColorBuffer)
@@ -79,8 +74,6 @@ class Cube {
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY)
         gl.glDisableClientState(GL10.GL_COLOR_ARRAY)
         // gl.glDisable(GL10.GL_CULL_FACE);
-
-        gl.glPopMatrix()
     }
 
 }
