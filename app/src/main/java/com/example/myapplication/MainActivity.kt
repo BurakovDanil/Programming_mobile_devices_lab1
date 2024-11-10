@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.ViewModel
@@ -194,6 +195,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             var showCube by remember { mutableStateOf(true) }
             var selectedPlanetIndex by remember { mutableStateOf(0) }
+            val context = LocalContext.current
             glSurfaceView = GLSurfaceView(this).apply {
                 setEGLContextClientVersion(1)
                 renderer =  MyRenderer(this@MainActivity)
@@ -230,23 +232,30 @@ class MainActivity : ComponentActivity() {
                         }
 
                         Button(onClick = {
-                            val planetName = when (selectedPlanetIndex) {
-                                0 -> "Меркурий"
-                                1 -> "Венера"
-                                2 -> "Земля"
-                                3 -> "Марс"
-                                4 -> "Юпитер"
-                                5 -> "Сатурн"
-                                6 -> "Уран"
-                                7 -> "Нептун"
-                                8 -> "Луна"
-                                else -> "Неизвестная планета"
+                            if (selectedPlanetIndex == 8) {
+                                // Переход к экрану с изображением Луны
+                                context.startActivity(Intent(context, MoonInfoActivity::class.java))
+                            } else {
+                                val planetName = when (selectedPlanetIndex) {
+                                    0 -> "Меркурий"
+                                    1 -> "Венера"
+                                    2 -> "Земля"
+                                    3 -> "Марс"
+                                    4 -> "Юпитер"
+                                    5 -> "Сатурн"
+                                    6 -> "Уран"
+                                    7 -> "Нептун"
+                                    else -> "Неизвестная планета"
+                                }
+                                Toast.makeText(
+                                    this@MainActivity,
+                                    "Выбрана планета: $planetName",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                            Toast.makeText(this@MainActivity, "Выбрана планета: $planetName", Toast.LENGTH_SHORT).show()
                         }) {
                             Text("Информация")
                         }
-
 
                         Button(onClick = {
                             selectedPlanetIndex = (selectedPlanetIndex + 1) % 9
