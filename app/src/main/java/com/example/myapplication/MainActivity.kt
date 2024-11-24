@@ -235,7 +235,9 @@ class MainActivity : ComponentActivity() {
                             if (selectedPlanetIndex == 8) {
                                 // Переход к экрану с изображением Луны
                                 context.startActivity(Intent(context, MoonInfoActivity::class.java))
-                            } else {
+                            } else if(selectedPlanetIndex == 7){
+                                context.startActivity(Intent(context, NeptuneInfoActivity::class.java))
+                            } else{
                                 val planetName = when (selectedPlanetIndex) {
                                     0 -> "Меркурий"
                                     1 -> "Венера"
@@ -244,7 +246,6 @@ class MainActivity : ComponentActivity() {
                                     4 -> "Юпитер"
                                     5 -> "Сатурн"
                                     6 -> "Уран"
-                                    7 -> "Нептун"
                                     else -> "Неизвестная планета"
                                 }
                                 Toast.makeText(

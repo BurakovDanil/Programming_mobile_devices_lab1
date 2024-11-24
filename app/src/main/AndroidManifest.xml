@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MoonInfoActivity" />
+        <activity android:name=".NeptuneInfoActivity" />
     </application>
 
 </manifest>
