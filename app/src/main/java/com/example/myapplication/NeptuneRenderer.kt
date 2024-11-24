@@ -61,18 +61,18 @@ class NeptuneView(context: Context) : GLSurfaceView(context) {
         }
 
         override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
-            // Устанавливаем область просмотра
+            // Устанавливаем область просмотра(весь экран)
             GLES20.glViewport(0, 0, width, height)
             val aspectRatio = width.toFloat() / height.toFloat()
 
-            // Настраиваем матрицу проекции
+            // Настраиваем матрицу проекции - перспектива
             Matrix.perspectiveM(projectionMatrix, 0, 45f, aspectRatio, 1f, 10f)
 
             // Настраиваем матрицу вида (камера)
             Matrix.setLookAtM(viewMatrix, 0,
                 0f, 0f, 3f, // Позиция камеры
                 0f, 0f, 0f, // Точка, на которую смотрит камера
-                0f, 1f, 0f  // Вектор "вверх"
+                0f, 1f, 0f  // направление вектора "вверх"
             )
         }
 
@@ -87,7 +87,7 @@ class NeptuneView(context: Context) : GLSurfaceView(context) {
             Matrix.setIdentityM(modelMatrix, 0)
             Matrix.rotateM(modelMatrix, 0, angle, 0f, 1f, 0f)
 
-            // Вычисляем итоговую матрицу MVP (Model-View-Projection)
+            // Вычисляем итоговую матрицу Model-View-Projection
             Matrix.multiplyMM(mvpMatrix, 0, viewMatrix, 0, modelMatrix, 0)
             Matrix.multiplyMM(mvpMatrix, 0, projectionMatrix, 0, mvpMatrix, 0)
 
@@ -190,9 +190,9 @@ class NeptuneView(context: Context) : GLSurfaceView(context) {
         gl_Position = uMVPMatrix * aPosition;
 
         // Увеличиваем амплитуду и частоту для более заметных волн
-        float waveAmplitude = 0.05;
+        float waveAmplitude = 0.3;
         float waveFrequency = 10.0;
-        float waveSpeed = 2.0;
+        float waveSpeed = 5.0;
 
         // Смещение текстурных координат по оси x и y
         float offsetX = waveAmplitude * sin(aPosition.y * waveFrequency + uTime * waveSpeed);

@@ -24,6 +24,13 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
     private val neptune = Sphere(0.8f)
     private val moon = Sphere(0.1f) // Луна
 
+    // черная дыра
+    private val blackHole = Sphere(2.9f, shouldRotate = true)
+    private var blackHoleState = 0 // 0: снизу вверх, 1: слева направо, 2: снова снизу вверх
+    private var blackHolePositionX = 0.0f
+    private var blackHolePositionY = -10.0f // Начальная позиция снизу
+    private var blackHoleSpeed = 0.08f   // скорость перемещения
+
     // Массив радиусов планет
     private val planetRadii = floatArrayOf(
         0.2f, // Меркурий
@@ -74,6 +81,9 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         neptune.loadTexture(gl, context, R.drawable.neptune)
         moon.loadTexture(gl, context, R.drawable.moon)
 
+
+        blackHole.loadTexture(gl, context, R.drawable.black_hole);
+
     }
 
     override fun onDrawFrame(gl: GL10) {
@@ -86,6 +96,12 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         gl.glScalef(25f, 25f, 1.5f)
         gl.glEnable(GL10.GL_TEXTURE_2D)
         square.draw(gl)
+        gl.glPopMatrix()
+
+        // Рисуем черную дыру на заднем фоне
+        gl.glPushMatrix()
+        gl.glLoadIdentity()
+        drawBlackHole(gl)
         gl.glPopMatrix()
 
         // Рисуем Солнце
@@ -105,6 +121,7 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         drawPlanet(gl, neptune, 21f, neptuneOrbit, 7)
 
         updateOrbits()
+
 
 
     }
@@ -177,7 +194,41 @@ class MyRenderer(private val context: Context) : GLSurfaceView.Renderer {
         moonOrbit += 2f
     }
 
+    private fun drawBlackHole(gl: GL10) {
+        gl.glPushMatrix()
+        gl.glTranslatef(blackHolePositionX, blackHolePositionY, -34f) // Позиция черной дыры
+        blackHole.draw(gl)
 
+        // Обновляем позицию в зависимости от состояния
+        when (blackHoleState) {
+            0 -> { // Движение снизу вверх
+                blackHolePositionY += blackHoleSpeed
+                if (blackHolePositionY > 25.0f) { // Достигли верхней границы
+                    blackHolePositionY = 5.0f // Устанавливаем для слева-направо
+                    blackHolePositionX = -25.0f // Слева
+                    blackHoleState = 1 // Переход к движению слева направо
+                }
+            }
+            1 -> { // Движение слева направо
+                blackHolePositionX += blackHoleSpeed
+                if (blackHolePositionX > 25.0f) { // Достигли правой границы
+                    blackHolePositionX = 0.0f // Центр
+                    blackHolePositionY = -25.0f // Снова вниз
+                    blackHoleState = 2 // Переход к движению снизу вверх
+                }
+            }
+            2 -> { // Движение снизу вверх
+                blackHolePositionY += blackHoleSpeed
+                if (blackHolePositionY > 25.0f) { // Достигли верхней границы
+                    blackHolePositionY = 5.0f // Устанавливаем для слева-направо
+                    blackHolePositionX = -25.0f // Слева
+                    blackHoleState = 1 // Возврат к движению слева направо
+                }
+            }
+        }
+
+        gl.glPopMatrix()
+    }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
         gl.glViewport(0, 0, width, height)

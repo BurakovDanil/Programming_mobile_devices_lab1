@@ -12,7 +12,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 
-class Sphere(private val radius: Float) {
+class Sphere(private val radius: Float, private val shouldRotate: Boolean = true) {
     private val vertexBuffer: FloatBuffer
     private val textureBuffer: FloatBuffer
     private val indexBuffer: ShortBuffer
@@ -112,7 +112,9 @@ class Sphere(private val radius: Float) {
 
     fun draw(gl: GL10) {
         gl.glPushMatrix()
-        gl.glRotatef(rotationAngle, 0f, 1f, 0f)
+        if (shouldRotate) {
+            gl.glRotatef(rotationAngle, 0f, 1f, 0f)
+        }
 
         gl.glBindTexture(GL10.GL_TEXTURE_2D, textureId)
 
@@ -134,9 +136,11 @@ class Sphere(private val radius: Float) {
 
         gl.glPopMatrix()
 
-        rotationAngle += 0.5f
-        if (rotationAngle >= 360f) {
-            rotationAngle = 0f
+        if (shouldRotate) {
+            rotationAngle += 0.5f
+            if (rotationAngle >= 360f) {
+                rotationAngle = 0f
+            }
         }
     }
 }
